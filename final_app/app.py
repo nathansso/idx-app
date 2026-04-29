@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
-import pickle
 import os
 import sys
 import matplotlib.pyplot as plt
@@ -16,9 +15,6 @@ if PROJECT_ROOT not in sys.path:
 
 from final_app.ensemble_model import (
     DeployableStackedEnsemble,
-    EnsembleModel,
-    CathyLevelsMultiLabelEncoder,
-    RandomSampleImputer,
     FeatureEngineer,
 )
 
@@ -1219,13 +1215,7 @@ def load_ensemble_model():
         ensemble = joblib.load(STACKED_ENSEMBLE_MODEL_PATH)
         return ensemble, "stacked"
 
-    sys.modules['__main__'].LevelsMultiLabelEncoder = CathyLevelsMultiLabelEncoder
-    sys.modules['__main__'].RandomSampleImputer     = RandomSampleImputer
-    sys.modules['__main__'].FeatureEngineer         = FeatureEngineer
-    sys.modules['__main__'].EnsembleModel           = EnsembleModel
-    with open(LEGACY_ENSEMBLE_MODEL_PATH, "rb") as f:
-        ensemble = pickle.load(f)
-    return ensemble, "legacy"
+    raise FileNotFoundError("No model artifacts found. Expected native artifacts in final_app/model_artifacts/.")
 
 
 def run_prediction(model, X, output_is_log=False):
